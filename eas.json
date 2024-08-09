@@ -8,9 +8,17 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "ios": {
+        "simulator": true,
+        "credentialsSource": "local"
+      }
     },
-    "production": {}
+    "production": { 
+      "ios": {
+      "simulator": false,
+      "credentialsSource": "local"
+    }}
   },
   "submit": {
     "production": {}

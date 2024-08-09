@@ -52,7 +52,7 @@ const ModalConfirmDelete = ({ visible, cancel, deleteItem, item, data }) => {
       })
       .catch((err) => console.log("Базыг бэлтгэхэд асуудал гарлаа!", err));
   };
-  5;
+
   const saveOrder = () => {
     initDbOrder()
       .then((result) => {

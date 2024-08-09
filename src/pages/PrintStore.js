@@ -65,7 +65,7 @@ export default function Home() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        "https://9xz5rjl8ej.execute-api.us-east-1.amazonaws.com/production/balance"
+        "https://dmunkh.store/api/backend/balance/group"
       );
       const json = await response.json();
       console.log("json", json);
@@ -80,13 +80,14 @@ export default function Home() {
     fetchOrder(formattedDate);
     const fetchData = async () => {
       try {
+        console.log("start loading......");
         setIsLoading(true);
         const response = await fetch(
-          "https://9xz5rjl8ej.execute-api.us-east-1.amazonaws.com/production/balance"
+          "https://dmunkh.store/api/backend/balance/group"
         );
+
         const json = await response.json();
         setlist(json);
-        console.log("errorrrrrr");
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching balance:", error);
@@ -95,7 +96,7 @@ export default function Home() {
 
     fetchData();
   }, [formattedDate]);
-
+  console.log(list);
   // useEffect(() => {
   //   fetchOrder(formattedDate);
   // }, [selectedItem]);
@@ -260,15 +261,18 @@ export default function Home() {
     return html;
   };
   const handleItemAdded = () => {
+    console.log("loading start");
     // This function will be called when an item is successfully added
     // You can use it to refresh the list
     const fetchData = async () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          "https://9xz5rjl8ej.execute-api.us-east-1.amazonaws.com/production/balance"
+          // "https://9xz5rjl8ej.execute-api.us-east-1.amazonaws.com/production/balance"
+          "https://dmunkh.store/api/backend/balance/group"
         );
         const json = await response.json();
+        console.log(response);
         setlist(json);
         console.log("errorrrrrr");
         setIsLoading(false);
@@ -376,8 +380,8 @@ export default function Home() {
                 }}
               >
                 <Text style={styles.alignLeft}>
-                  {parseInt(index) + 1} | {item.id} | {item.company_name} |{" "}
-                  {item.une} -{" "}
+                  {parseInt(index) + 1} | {item.id} | {item.ner} | {item.cash} |
+                  {item.uldegdel}
                 </Text>
               </TouchableOpacity>
               <View style={styles.bottomLine} />

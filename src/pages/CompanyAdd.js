@@ -10,7 +10,7 @@ import {
 import { TextInput } from "@react-native-material/core";
 import MyButton from "./MyButton";
 
-import { loadCompany } from "../store/places-actions";
+// import { loadCompany } from "../store/places-actions";
 import {
   initDb,
   initDbCompany,
@@ -20,7 +20,7 @@ import {
   getCompany,
   deleteCompany,
 } from "../helpers/db";
-import { useSelector, useDispatch } from "react-redux";
+// import { useSelector, useDispatch } from "react-redux";
 
 const ModalConfirmDelete = ({ visible, cancel, deleteItem, item }) => {
   const [ner, setner] = useState("");
@@ -28,8 +28,8 @@ const ModalConfirmDelete = ({ visible, cancel, deleteItem, item }) => {
   const [utas, setutas] = useState("");
   const [code, setcode] = useState("");
   const [dans, setdans] = useState("");
-  const company = useSelector((state) => state.data.company);
-  const dispatch = useDispatch();
+  // const company = useSelector((state) => state.data.company);
+  // const dispatch = useDispatch();
 
   // React.useEffect(() => {
   //   dispatch(loadPlaces());

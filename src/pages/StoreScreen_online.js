@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   View,
@@ -9,13 +10,14 @@ import {
   Button,
 } from "react-native";
 // import { useSelector, useDispatch } from "react-redux";
-
-import StoreAdd from "../pages/StoreAdd";
+import { TextInput } from "@react-native-material/core";
+import StoreAdd from "./StoreAdd_online";
 import { initDbDelguur, getStore } from "../helpers/db";
 import { useFocusEffect } from "@react-navigation/native";
 import { loadPlaces, loadStore } from "../store/places-actions";
 import StoreList from "../components/StoreList";
 import MyButton from "./MyButton";
+import _ from "lodash";
 
 const Store = ({ navigation }) => {
   // const store = useSelector((state) => state.data.store);
@@ -24,24 +26,53 @@ const Store = ({ navigation }) => {
   const [item, setItem] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [text, setText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [cc, setcc] = useState([]);
+  const [list, setlist] = useState([]);
+  const [search, setsearch] = useState("");
+  const [masterdata, setmasterdata] = useState([]);
+  const [refresh, setrefresh] = useState(0);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchCompany();
-    }, [])
-  );
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          "https://dmunkh.store/api/backend/delguur"
+        );
+
+        const json = await response.json();
+        setlist(_.orderBy(json.response, ["delguur_ner"]));
+        setmasterdata(_.orderBy(json.response, ["delguur_ner"]));
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching balance:", error);
+      }
+    };
+
+    fetchData();
+  }, [refresh]);
 
   const fetchCompany = () => {
-    initDbDelguur()
-      .then((result) => {
-        (async () => {
-          const result = await getStore();
-          setcc(result.rows._array);
-          console.log(result.rows._array);
-        })();
-      })
-      .catch((err) => console.log("Базыг бэлтгэхэд асуудал гарлаа!", err));
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          "https://dmunkh.store/api/backend/delguur"
+        );
+
+        const json = await response.json();
+        setlist(_.orderBy(json.response, ["delguur_ner"]));
+        setmasterdata(_.orderBy(json.response, ["delguur_ner"]));
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching balance:", error);
+      }
+    };
+
+    fetchData();
   };
 
   const confirmDelete = (item) => {
@@ -79,9 +110,26 @@ const Store = ({ navigation }) => {
     setSelectedItem(item);
     setShowModal(true);
   };
+  const searchfilter = (text) => {
+    if (text) {
+      const newData = masterdata.filter((item) => {
+        const itemData = item.delguur_ner
+          ? item.delguur_ner.toUpperCase()
+          : "".toUpperCase();
+        const textData = text.toUpperCase();
+
+        return itemData.indexOf(textData) > -1;
+      });
+      setlist(newData);
+      setsearch(text);
+    } else {
+      setlist(masterdata);
+      setsearch(text);
+    }
+  };
 
   return (
-    <View>
+    <View style={styles.container}>
       <StoreAdd
         item={selectedItem}
         visible={showModal}
@@ -102,28 +150,47 @@ const Store = ({ navigation }) => {
           <Button title="Харах" onPress={fetchCompany} />
         </View>
       </View>
+      <View style={styles.row}>
+        <View style={styles.alignLeft}>
+          <TextInput
+            // style={{ height: 10, borderWidth: 1, borderColor: "gray" }}
+            value={search}
+            onChangeText={(text) => searchfilter(text)}
+            placeholder="Дэлгүүр хайх"
+          />
+        </View>
+        <View style={styles.alignRight}>
+          {/* <Text>order_id - {order_id}</Text> */}
+          {/* <View style={styles.container}>
+            <BarcodeScanner />
+          </View> */}
+          {/* <Button title="Шалгах" onPress={() => setrefresh(refresh + 1)} /> */}
+        </View>
+      </View>
 
       {/* <MyButton title="Нэмэх" onPress={() => handleClick("name")} /> */}
 
-      {cc && (
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
         <FlatList
-          data={cc}
+          data={list}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item, index }) => (
             <View style={styles.row}>
               <Text style={styles.alignLeft}>
                 <Text style={styles.itemText}>
-                  {parseInt(index) + 1} | {item.ner} - {item.rd} - {item.hayag}{" "}
-                  - {item.dans}
+                  {parseInt(index) + 1}. {item.delguur_ner} -{item.d_register}-{" "}
+                  {item.d_hayag} - {item.d_utas}
                 </Text>
               </Text>
-              <Text style={styles.alignRight}>
+              {/* <Text style={styles.alignRight}>
                 <Text style={styles.alignRight}>
                   <TouchableOpacity onPress={() => handleOpenModal(item)}>
                     <Text style={styles.orderText}>Засах</Text>
                   </TouchableOpacity>
                 </Text>
-              </Text>
+              </Text> */}
               <View style={styles.bottomLine} />
             </View>
           )}
@@ -137,9 +204,9 @@ export default Store;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    // backgroundColor: "#fff",
+    // alignItems: "center",
+    // justifyContent: "center",
   },
   bottomLine: {
     position: "absolute",
